@@ -1,7 +1,34 @@
-import logo from "./logo.svg";
+import { useState } from "react";
 import "./App.css";
+import firebase from './firebase.js';
 
 function App() {
+  const [appState, setAppState] = useState({
+    currentItem: "",
+    username: "",
+  });
+
+  function handleChange(e) {
+    console.log(e.target)
+    setAppState({
+      [e.target.name]: e.target.value,
+    });
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    const itemsRef = firebase.database().ref('items');
+    const item = {
+      title: appState.currentItem,
+      user: appState.username
+    }
+    itemsRef.push(item);
+    setAppState({
+      currentItem: '',
+      username: ''
+    });
+  }
+
   return (
     <div className="app">
       <header>
@@ -11,7 +38,7 @@ function App() {
       </header>
       <div className="container">
         <section className="add-item">
-          <form>
+          <form onSubmit={handleSubmit}>
             <input
               type="text"
               name="username"
